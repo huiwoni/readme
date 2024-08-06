@@ -89,6 +89,9 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |MoA|26.96|0.8241|
 
 ## Attention 방식에 따른 실험 결과
+- RCA : 정규 분포를 가지는 벡터 v = (v_1, v_2, v_3)와 이미지를 혼합합니다.
+- RCSA : 사각 형태의 영역을 무작위로 선택하고, 해당 영역에 다른 이미지를 잘라 넣습니다.
+- RCA + CSA: 서로 같은 두 이미지에 대해 Cutmix[3]를 진행한 다. 이때 두 이미지의 해상도는 서로 다르며 저해상도의 이미지는 미리 스케일 업하여 고해상도 이미지와 동일한 사이즈를 가지도록 합니다.
 
 |Method|PSNR|SSIM|
 |:----:|:----:|:----:|
