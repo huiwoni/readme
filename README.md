@@ -71,14 +71,101 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 - log와 weight 파일은 다음 경로에 저장됩니다. `./experiments`.
 
 # 주요 코드
-## 사전학습
+## 사전학습 단계의 전처리
 - 파인튜닝 때와 모델 구조를 동일하게 통일해 주기 위해 수정하였습니다.
-- DF2K 데이터 셋의 LR(Low Resolution) image를 x8 업스케일링을 진행하고 사전학습을 진행합니다.
-- `./hat/archs/not_aug_build_SR_model.py` 의 102 ~ 104 번 줄입니다.
-```        if self.gt.size() != self.lq.size():
-            scale = self.gt.size(2) // self.lq.size(2)
-            self.lq = F.interpolate(self.lq, scale_factor=scale, mode="nearest")```
-##
+- LR(Low Resolution) image를 x8 업스케일하고 사전학습을 진행합니다.
+- 코드는 `./hat/archs/not_aug_build_SR_model.py` 의 102 ~ 104 번 줄에서 확인 가능합니다.
+```
+    if self.gt.size() != self.lq.size():
+            scale = self.gt.size(2) // self.lq.size(2)                           # 몇 배 업스케일 할지 결정
+            self.lq = F.interpolate(self.lq, scale_factor=scale, mode="nearest") # 업스케일 진행
+```
+## 파인튜닝 단계에서의 Augmentation 적용
+- LR(Low Resolution) image x8 업스케일을 우선 진행합니다.
+- 이후 선택된 Augmentation 방식을 적용하고 파인 튜닝을 진행합니다.
+- 코드는 `./hat/archs/aug_build_SR_model.py` 의 104 ~ 110 번 줄에서 확인 가능합니다.
+```
+        if self.gt.size() != self.lq.size():
+            scale = self.gt.size(2) // self.lq.size(2)                            # 몇 배 업스케일 할지 결정
+            self.lq = F.interpolate(self.lq, scale_factor=scale, mode="nearest")  # 업스케일 진행
+
+        self.gt, self.lq, mask, aug = augments.apply_augment(                     # 선택된 Augmentation 방식 적용
+            self.gt, self.lq,
+            self.opt['augs'], self.opt['prob'], self.opt['alpha'],
+            self.opt['aux_prob'], self.opt['aux_alpha']
+        )
+```
+## Test-time Augmentation 방식
+- rotation, flip을 적용하여 8개의 이미지를 생성하고 이를 순차적으로 모델에 입력해 줍니다.
+- 이후 출력된 SR이미지의 방향을 일치시키고 같은 위치의 pixel 값끼리 평균을 냅니다.
+- 코드는 `./hat/models/TDA_hat_model.py`의 141 ~ 210 번 줄에서 확인 가능합니다.
+  
+```
+#################################################################################### test time augmentation start
+# f rotation, flip을 적용해 새로운 LR 이미지 생성
+
+            lr_image_dic = {}
+
+            sr_image_dic = {}
+
+            lr_image_dic['img_0'] = val_data['lq']
+            lr_image_dic['img_90'] = torch.rot90(val_data['lq'], 1, [2, 3])
+            lr_image_dic['img_180'] = FF.rotate(val_data['lq'], 180)
+            lr_image_dic['img_270'] = torch.rot90(val_data['lq'], 3, [2, 3])
+
+
+            lr_image_dic['img_lr_flip'] = FF.hflip(val_data['lq'])
+            lr_image_dic['img_lr_flip_90'] = torch.rot90(lr_image_dic['img_lr_flip'], 1, [2, 3])
+            lr_image_dic['img_lr_flip_180'] = FF.rotate(lr_image_dic['img_lr_flip'], 180)
+            lr_image_dic['img_lr_flip_270'] = torch.rot90(lr_image_dic['img_lr_flip'], 3, [2, 3])
+
+            ##################################################################################### for start
+            # 순차적인 LR 이미지 모델 입력 및 SR 이미지 생성
+
+            for image_name, lr_image in lr_image_dic.items():
+
+                self.feed_data(lr_image)
+
+                self.pre_process()
+
+                if 'tile' in self.opt:
+                    self.tile_process()
+                else:
+                    self.process()
+                self.post_process()
+
+                #################################################### save in dict start
+                # SR 이미지를 사전에 저장
+                visuals = self.get_current_visuals()
+                sr_image_dic[image_name] = visuals
+
+                #################################################### save in dict end
+
+            #################################################################################### for end
+            
+            ######################################################################### Orientation restoration start
+            # 생성된 SR 이미지의 방향 통일
+            sr_image_dic['img_0'] = sr_image_dic['img_0']['result']
+            sr_image_dic['img_90'] = torch.rot90(sr_image_dic['img_90']['result'], 3, [2, 3])
+            sr_image_dic['img_180'] = FF.rotate(sr_image_dic['img_180']['result'], 180)
+            sr_image_dic['img_270'] = torch.rot90(sr_image_dic['img_270']['result'], 1, [2, 3])
+
+
+            sr_image_dic['img_lr_flip'] = FF.hflip(sr_image_dic['img_lr_flip']['result'])
+            sr_image_dic['img_lr_flip_90'] = FF.hflip(torch.rot90(sr_image_dic['img_lr_flip_90']['result'], 3, [2, 3]))
+            sr_image_dic['img_lr_flip_180'] = FF.hflip(FF.rotate(sr_image_dic['img_lr_flip_180']['result'], 180))
+            sr_image_dic['img_lr_flip_270'] = FF.hflip(torch.rot90(sr_image_dic['img_lr_flip_270']['result'], 1, [2, 3]))
+            ######################################################################### Orientation restoration end
+
+            # 같은 위치의 pixel 값끼리 평균을 냄
+            one_channel_result = torch.cat(list(sr_image_dic.values()), dim=1).mean(dim = 1)
+
+            result = torch.cat((one_channel_result,one_channel_result, one_channel_result), dim=0)
+
+            sr_img = tensor2img(result)
+
+#################################################################################### test time augmentation end
+```
 
 # 실험 결과
 ## Optimizer에 따른 PSNR, SSIM 비교
