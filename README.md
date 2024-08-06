@@ -64,3 +64,5 @@ The training logs and weights will be saved in the `./experiments` folder.
 CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 --master_port=1234 hat/train.py -opt options/train/train_HAT_thermalSRx8_48_cutblur_fineturn.yml --launcher pytorch
 ```
 log와 weight 파일은 다음 경로에 저장됩니다. `./experiments` folder.
+
+
