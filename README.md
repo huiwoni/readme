@@ -99,3 +99,22 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |RCSA|26.98|0.8229|
 |RCA + CSA|26.96|0.8228|
 
+## 사전학습에 따른 실험 결과
+- DF2K 데이터 셋을 통한 사전학습을 진행합니다.
+- 사전학습을 진행할 경우 TISR challenge의 validation set을 통해 평가를 진행합니다.
+- TISR challenge의 데이터 셋을 통한 파인 튜닝을 진행합니다.
+- 사전학습을 진행하면서 특정 iter의 사전학습을 진행한 모델을 가져와 파인튜닝을 진행하였고, 파인튜닝을 진행할 경우 PSNR이 하강할 때 학습을 종료하였습니다.
+
+|사전학습|파인 튜닝|
+|:----:|:----:|
+
+|Iteration|PSNR|SSIM|PSNR|SSIM|
+|:----:|:----:|:----:|:----:|:----:|
+|HAT|27.000|0.8233|
+|Blend|27.97|0.8223|
+|Cutout|27.01|0.8241|
+|CutMix|26.97|0.8242|
+|Mixup|27.07|0.8251|
+|CutMixup|27.04|0.8246|
+|CutBlur|**27.08**|**0.8261**|
+|MoA|26.96|0.8241|
