@@ -70,6 +70,7 @@ log와 weight 파일은 다음 경로에 저장됩니다. `./experiments` folder
 |Method|PSNR|SSIM|
 |------|---|---|
 |HAT|27.000|0.8233|
+|------|---|---|
 |Blend|27.97|0.8223|
 |Cutout|27.01|0.8241|
 |CutMix|26.97|0.8242|
