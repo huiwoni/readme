@@ -18,15 +18,10 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --e
 
 ```
 |-- datasets
-
     |-- DomainNet
-    
         |-- clipart
-        
         |-- painting
-        
         |-- real
-        
         |-- sketch
 ```
 ## Source 모델 학습
@@ -41,15 +36,21 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --e
  CUDA_VISIBLE_DEVICES=0,1,2,3 python challenge_test_time.py --cfg ./best_cfgs/[yaml 파일 이름] --output_dir ./output/test-time-evaluation/"[실험 이름]"
 ```
  
-### 모델 내부 학습 위치에 따른 실험
+### 주요 yaml 파일명 및 실험 방법 정리
 - adacontrast.yaml : adapter를 추가하지 않은 실험, 모델 내부 모든 파라미터를 업데이트 합니다.
 - adacontrast_bn.yaml : adapter를 추가하지 않은 실험, 모델 내부 Batch Normalization Layer의 파라미터를 업데이트 합니다.
 - adacontrast_conv.yaml : adapter를 추가한 실험, adapter의 파라미터 만을 업데이트 합니다.
 - adacontrast_all_conv.yaml : adapter를 추가한 실험, adapter와 모델 내부 모든 파라미터를 업데이트 합니다.
 - adacontrast_bn_conv.yaml :  adapter를 추가한 실험, adapter와 모델 내부 Batch Normalization Layer의 파라미터를 업데이트 합니다.
 - adacontrast_all_conv_refine.yaml : adapter를 추가한 실험, adapter와 모델 내부 모든 파라미터를 업데이트 합니다.
-### a에 따른 실험
-- adapter를 추가한 실험의 경우 MODEl: A: 의 값을 수정하여 실험을 다르게 할 수 있습니다.
+- 
+### a의 값 변화에 따른 실험 결과 확인 방법
+- adapter를 추가한 실험의 경우 yaml 파일 내부 `A` 의 값을 수정하여 실험을 다르게 할 수 있습니다.
+- 예시
+```
+MODEL:
+  A: 0.1 // 0.01 # 원하는 값 입력
+```
 
 # 실험 결과
 ## a에 따른 실험결과
