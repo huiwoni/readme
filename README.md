@@ -201,7 +201,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |  x  | 27.08 | 0.8261 |
 |  √  | **27.19** | **0.8284** |
 
-## 사전학습에 따른 실험 결과
+## 사전학습 진행에 따른 실험 결과
 - DF2K 데이터 셋을 통한 사전학습을 진행합니다.
 - 사전학습을 진행할 경우 TISR challenge[9]의 validation set을 통해 평가를 진행합니다.
 - TISR challenge[9]의 데이터 셋을 통한 파인 튜닝을 진행합니다.
