@@ -1,4 +1,4 @@
-# [PBVS @ CVPR 2024 Thermal Images Super-resolution challenge- Track 1]
+![image](https://github.com/user-attachments/assets/076dec11-d2fe-4cc0-8cc7-87bacf18ee1e)# [PBVS @ CVPR 2024 Thermal Images Super-resolution challenge- Track 1]
 
 이 방법을 통해 [TISR 챌린지](https://codalab.lisn.upsaclay.fr/competitions/17013#results)에서 PSNR 4위, SSIM 3위를 기록하였습니다. 
 # 구동 방법
@@ -65,4 +65,12 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 ```
 log와 weight 파일은 다음 경로에 저장됩니다. `./experiments` folder.
 
-
+# 실험 결과 
+## Augmentation 방법에 따른 실험 결과
+|Method|PSNR|SSIM|
+|------|---|---|
+|HAT|테스트2|테스트3|
+|Blend
+![image](https://github.com/user-attachments/assets/ad5791cf-87c4-4602-848a-b7eb813cb1ad)
+|테스트2|테스트3|
+|테스트1|테스트2|테스트3|
