@@ -175,9 +175,6 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |       AdamW      |       26.99      |     **0.8234**    |
 
 ## Attention 방식에 따른 PSNR, SSIM 비교
-- RCA : 정규 분포를 가지는 벡터 v = (v_1, v_2, v_3)와 이미지를 혼합합니다.
-- RCSA : 사각 형태의 영역을 무작위로 선택하고, 해당 영역에 다른 이미지를 잘라 넣습니다.
-- RCA + CSA: 서로 같은 두 이미지에 대해 Cutmix[3]를 진행한 다. 이때 두 이미지의 해상도는 서로 다르며 저해상도의 이미지는 미리 스케일 업하여 고해상도 이미지와 동일한 사이즈를 가지도록 합니다.
 
 |Method|PSNR|SSIM|
 |:----:|:----:|:----:|
@@ -269,4 +266,17 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
   </tr>
 </tbody></table>
 
-
+# Reference
+\bibitem{b1} Rafael E. Rivadeneira, Angel D. Sappa, Chenyang Wang, Junjun Jiang, Zhiwei Zhong, Peilin Chen and Shiqi Wang, "Thermal Image Super-Resolution Challenge Results - PBVS 2024," In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops, pp.3113--3122, 2024.
+\bibitem{b2}Xiangyu Chen, Xintao Wang, Jiantao Zhou, and Chao Dong. "Activating more pixels in image super-resolution transformer," In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp.22367-22377, 2023.
+\bibitem{b3} Rafael E. Rivadeneira, Angel D. Sappa, Boris X. Vintimilla, Dai Bin, Li Ruodi, Li Shengye, Zhiwei Zhong, Xianming Liu, Junjun Jiang and Chenyang Wang, "Thermal Image Super-Resolution Challenge Results - PBVS 2023," In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition Workshops, pp.470--478, 2023.
+\bibitem{b4}Ben Niu, Weilei Wen, Wenqi Ren, Xiangde Zhang, Lianping Yang, Shuzhen Wang, Kaihao Zhang, Xiaochun Cao, and Haifeng Shen, "Single image super-resolution via a holistic attention network," In European conference on computer vision, pp. 191-–207, 2020
+\bibitem{b5}Terrance DeVries and Graham W Taylor, "Improved regularization of convolutional neural networks with cutout," arXiv
+preprint arXiv:1708.04552, 2017.
+\bibitem{b6} Sangdoo Yun, Dongyoon Han, Seong Joon Oh, Sanghyuk Chun, Junsuk Choe, and Youngjoon Yoo, "Cutmix: Regularization strategy to train strong classifiers with localizable features," arXiv preprint arXiv:1905.04899, 2019.
+\bibitem{b7} Hongyi Zhang, Moustapha Cisse, Yann N Dauphin, and David Lopez-Paz, "Mixup: Beyond empirical risk minimization," arXiv preprint arXiv:1710.09412, 2017. 
+\bibitem{b8} Jaejun Yoo, Namhyuk Ahn and Kyung-Ah Sohn, "Rethinking Data Augmentation for Image Super-resolution: A Comprehensive Analysis and a New Strategy," In Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition, pp.8375--8384, 2020.
+\bibitem{b9} Rafael E Rivadeneira, Angel D Sappa, and Boris X Vintimilla, "Thermal image super-resolution: A novel architecture and dataset," In Proc. of the International Joint Conference on Computer Vision, Imaging and Computer Graphics Theory and Applications, pages 111-–119, 2020.
+Bee Lim, Sanghyun Son, Heewon Kim, Seungjun Nah, and
+\bibitem{b10} Bee Lim, Sanghyun Son, Heewon Kim, Seungjun Nah and Kyoung Mu Lee, "Enhanced deep residual networks for single image super-resolution," In Proceedings of the IEEE conference on computer vision and pattern recognition workshops, pages 136–-144, 2017. 
+\bibitem{b11} Radu Timofte, Eirikur Agustsson, Luc Van Gool, MingHsuan Yang, and Lei Zhang. "Ntire 2017 challenge on single image super-resolution: Methods and results," In Proceedings of the IEEE conference on computer vision and pattern recognition workshops, pages 114–-125, 2017.
