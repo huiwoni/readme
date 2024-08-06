@@ -104,16 +104,23 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 - 사전학습을 진행할 경우 TISR challenge의 validation set을 통해 평가를 진행합니다.
 - TISR challenge의 데이터 셋을 통한 파인 튜닝을 진행합니다.
 - 사전학습을 진행하면서 특정 iter의 사전학습을 진행한 모델을 가져와 파인튜닝을 진행하였고, 파인튜닝을 진행할 경우 PSNR이 하강할 때 학습을 종료하였습니다.
+- 
 
-|사전학습|파인 튜닝|
-|:----:|:----:|
-|Iteration|PSNR||SSIM|PSNR|SSIM||
-|:----:|:----:|:----:|:----:|:----:|
-|HAT|27.000|0.8233|
-|Blend|27.97|0.8223|
-|Cutout|27.01|0.8241|
-|CutMix|26.97|0.8242|
-|Mixup|27.07|0.8251|
-|CutMixup|27.04|0.8246|
-|CutBlur|**27.08**|**0.8261**|
-|MoA|26.96|0.8241|
+<style type="text/css">
+.tg  {border-collapse:collapse;border-spacing:0;}
+.tg td{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg th{border-color:black;border-style:solid;border-width:1px;font-family:Arial, sans-serif;font-size:14px;
+  font-weight:normal;overflow:hidden;padding:10px 5px;word-break:normal;}
+.tg .tg-c3ow{border-color:inherit;text-align:center;vertical-align:top}
+</style>
+<table class="tg"><thead>
+  <tr>
+    <th class="tg-c3ow" colspan="3">   <br>사전학습 (validation set)   </th>
+    <th class="tg-c3ow" colspan="2">   <br>Codalab   (test set)   </th>
+  </tr></thead>
+<tbody>
+  <tr>
+    <td class="tg-c3ow">   <br>Iteration   </td>
+    <td class="tg-c3ow">   <br>PSNR   </td>
+    <td class="tg-c3ow">   <br>SSIM   </td>
