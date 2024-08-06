@@ -68,6 +68,17 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 - log와 weight 파일은 다음 경로에 저장됩니다. `./experiments`.
 
 # 실험 결과 
+## Attention 방식에 따른 실험 결과
+- RCA : 정규 분포를 가지는 벡터 v = (v_1, v_2, v_3)와 이미지를 혼합합니다.
+- RCSA : 사각 형태의 영역을 무작위로 선택하고, 해당 영역에 다른 이미지를 잘라 넣습니다.
+- RCA + CSA: 서로 같은 두 이미지에 대해 Cutmix[3]를 진행한 다. 이때 두 이미지의 해상도는 서로 다르며 저해상도의 이미지는 미리 스케일 업하여 고해상도 이미지와 동일한 사이즈를 가지도록 합니다.
+
+|Method|PSNR|SSIM|
+|:----:|:----:|:----:|
+|RCA|27.00|0.8233|
+|RCSA|26.98|0.8229|
+|RCA + CSA|26.96|0.8228|
+
 ## Augmentation 방법에 따른 실험 결과
 - Blend : 정규 분포를 가지는 벡터 v = (v_1, v_2, v_3)와 이미지를 혼합합니다.
 - CutMix : 사각 형태의 영역을 무작위로 선택하고, 해당 영역에 다른 이미지를 잘라 넣습니다.
@@ -88,17 +99,6 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |CutBlur|**27.08**|**0.8261**|
 |MoA|26.96|0.8241|
 
-## Attention 방식에 따른 실험 결과
-- RCA : 정규 분포를 가지는 벡터 v = (v_1, v_2, v_3)와 이미지를 혼합합니다.
-- RCSA : 사각 형태의 영역을 무작위로 선택하고, 해당 영역에 다른 이미지를 잘라 넣습니다.
-- RCA + CSA: 서로 같은 두 이미지에 대해 Cutmix[3]를 진행한 다. 이때 두 이미지의 해상도는 서로 다르며 저해상도의 이미지는 미리 스케일 업하여 고해상도 이미지와 동일한 사이즈를 가지도록 합니다.
-
-|Method|PSNR|SSIM|
-|:----:|:----:|:----:|
-|RCA|27.00|0.8233|
-|RCSA|26.98|0.8229|
-|RCA + CSA|26.96|0.8228|
-
 ## 사전학습에 따른 실험 결과
 - DF2K 데이터 셋을 통한 사전학습을 진행합니다.
 - 사전학습을 진행할 경우 TISR challenge의 validation set을 통해 평가를 진행합니다.
@@ -107,50 +107,50 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 
 <table class="tg"><thead>
   <tr>
-    <th class="tg-c3ow" colspan="3">   <br>사전학습 (validation set)   </th>
-    <th class="tg-c3ow" colspan="2">   <br>Codalab   (test set)   </th>
+    <th class="tg-c3ow" colspan="3">  Validation set</th>
+    <th class="tg-c3ow" colspan="2">Test set</th>
   </tr></thead>
 <tbody>
   <tr>
-    <td class="tg-c3ow">   <br>Iteration   </td>
-    <td class="tg-c3ow">   <br>PSNR   </td>
-    <td class="tg-c3ow">   <br>SSIM   </td>
-    <td class="tg-c3ow">   <br>PSNR   </td>
-    <td class="tg-c3ow">   <br>SSIM   </td>
+    <td class="tg-c3ow">  Iteration   </td>
+    <td class="tg-c3ow">   PSNR   </td>
+    <td class="tg-c3ow">   SSIM   </td>
+    <td class="tg-c3ow">   PSNR   </td>
+    <td class="tg-c3ow">   SSIM   </td>
   </tr>
   <tr>
-    <td class="tg-c3ow">   <br>x   </td>
-    <td class="tg-c3ow">   <br>x   </td>
-    <td class="tg-c3ow">   <br>x   </td>
-    <td class="tg-c3ow">   <br>27.19   </td>
-    <td class="tg-c3ow">   <br>0.8284   </td>
+    <td class="tg-c3ow">   x   </td>
+    <td class="tg-c3ow">   x   </td>
+    <td class="tg-c3ow">   x   </td>
+    <td class="tg-c3ow">   27.19   </td>
+    <td class="tg-c3ow">   0.8284   </td>
   </tr>
   <tr>
-    <td class="tg-c3ow">   <br>50000iter   </td>
-    <td class="tg-c3ow">   <br>26.30   </td>
-    <td class="tg-c3ow">   <br>0.8229   </td>
-    <td class="tg-c3ow">   <br>27.28   </td>
-    <td class="tg-c3ow">   <br>0.8305   </td>
+    <td class="tg-c3ow">   50000iter   </td>
+    <td class="tg-c3ow">   26.30   </td>
+    <td class="tg-c3ow">   0.8229   </td>
+    <td class="tg-c3ow">   27.28   </td>
+    <td class="tg-c3ow">   0.8305   </td>
   </tr>
   <tr>
-    <td class="tg-c3ow">   <br>124000iter   </td>
-    <td class="tg-c3ow">   <br>26.53   </td>
-    <td class="tg-c3ow">   <br>0.8302   </td>
-    <td class="tg-c3ow">   <br>27.32   </td>
-    <td class="tg-c3ow">   <br>0.8317   </td>
+    <td class="tg-c3ow">   124000iter   </td>
+    <td class="tg-c3ow">   26.53   </td>
+    <td class="tg-c3ow">   0.8302   </td>
+    <td class="tg-c3ow">   27.32   </td>
+    <td class="tg-c3ow">   0.8317   </td>
   </tr>
   <tr>
-    <td class="tg-c3ow">   <br>146000iter   </td>
-    <td class="tg-c3ow">   <br>26.57   </td>
-    <td class="tg-c3ow">   <br>0.8314   </td>
-    <td class="tg-c3ow">   <br>27.32    </td>
-    <td class="tg-c3ow">   <br>0.8318   </td>
+    <td class="tg-c3ow">   146000iter   </td>
+    <td class="tg-7btt">   26.57   </td>
+    <td class="tg-7btt">   0.8314   </td>
+    <td class="tg-c3ow">   27.32    </td>
+    <td class="tg-c3ow">   0.8318   </td>
   </tr>
   <tr>
-    <td class="tg-c3ow">   <br>191000iter   </td>
-    <td class="tg-c3ow">   <br>26.4940   </td>
-    <td class="tg-c3ow">   <br>0.8308   </td>
-    <td class="tg-c3ow">   <br>27.34    </td>
-    <td class="tg-c3ow">   <br>0.8322    </td>
+    <td class="tg-c3ow">   191000iter   </td>
+    <td class="tg-c3ow">   26.49   </td>
+    <td class="tg-c3ow">   0.8308   </td>
+    <td class="tg-7btt">   27.34    </td>
+    <td class="tg-7btt">   0.8322    </td>
   </tr>
 </tbody></table>
