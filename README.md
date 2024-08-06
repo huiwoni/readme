@@ -85,7 +85,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |CutMix|26.97|0.8242|
 |Mixup|27.07|0.8251|
 |CutMixup|27.04|0.8246|
-|CutBlur|27.08|0.8261
+|CutBlur|**27.08**|**0.8261**|
 |MoA|26.96|0.8241|
 
 
