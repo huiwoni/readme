@@ -107,8 +107,8 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 
 <table class="tg"><thead>
   <tr>
-    <th class="tg-c3ow" colspan="3">  Validation set</th>
-    <th class="tg-c3ow" colspan="2">Test set</th>
+    <th class="tg-c3ow" colspan="3">  사전학습</th>
+    <th class="tg-c3ow" colspan="2">파인튜닝 </th>
   </tr></thead>
 <tbody>
   <tr>
