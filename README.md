@@ -67,13 +67,13 @@ log와 weight 파일은 다음 경로에 저장됩니다. `./experiments` folder
 
 # 실험 결과 
 ## Augmentation 방법에 따른 실험 결과
-|Method|PSNR|SSIM|
-|:----:|:----:|:----:|
-|HAT|27.000|0.8233|
-|Blend|27.97|0.8223|
-|Cutout|27.01|0.8241|
-|CutMix|26.97|0.8242|
-|Mixup|27.07|0.8251|
-|CutMixup|27.04|0.8246|
-|CutBlur|27.08|0.8261|
-|MoA|26.96|0.8241|
+Method|PSNR|SSIM
+:----:|:----:|:----:
+HAT|27.000|0.8233
+Blend|27.97|0.8223
+Cutout|27.01|0.8241
+CutMix|26.97|0.8242
+Mixup|27.07|0.8251
+CutMixup|27.04|0.8246
+CutBlur|27.08|0.8261
+MoA|26.96|0.8241|
