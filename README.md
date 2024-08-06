@@ -88,4 +88,11 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |CutBlur|**27.08**|**0.8261**|
 |MoA|26.96|0.8241|
 
+## Attention 방식에 따른 실험 결과
+
+|Method|PSNR|SSIM|
+|:----:|:----:|:----:|
+|RCA|27.00|0.8233|
+|RCSA|26.98|0.8229|
+|RCA + CSA|26.96|0.8228|
 
