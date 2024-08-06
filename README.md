@@ -126,7 +126,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
   </tr></thead>
 <tbody>
   <tr>
-    <td class="tg-c3ow">  Iteration   </td>
+    <td class="tg-c3ow">  Iteration </td>
     <td class="tg-c3ow">   PSNR   </td>
     <td class="tg-c3ow">   SSIM   </td>
     <td class="tg-c3ow">   PSNR   </td>
