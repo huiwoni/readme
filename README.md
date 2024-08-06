@@ -102,7 +102,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
   
 ```
 #################################################################################### test time augmentation start
-# f rotation, flip을 적용해 새로운 LR 이미지 생성
+# rotation, flip을 적용해 새로운 LR 이미지 생성
 
             lr_image_dic = {}
 
