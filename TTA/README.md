@@ -28,7 +28,21 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --e
 - `train_source_resnet.py`를 통해 DomainNet-126 데이터 셋의 각 도메인의 데이터를 학습한 사전학습 모델을 생성할 수 있습니다. 
 - 265 번 줄의 clipart, painting, real, sketch 중 1개를 입력하여 해당 도메인에 속하는 데이터를 학습시킬 수 있습니다.
 - 또는 다음 [링크](https://drive.google.com/drive/folders/1z9YosBHLTxKj8qeWkaDeMS6YFFAwnE_W)에서 사전학습 모델을 다운받을 수 있습니다.
-  
+- 사전학습 모델을 아래와 같이 위치 시켜야 합니다.
+```
+|-- ckpt
+    |-- models
+        |-- domainnet126
+            |-- clipart
+                |-- model.pt
+            |-- painting
+                |-- model.pt
+            |-- real
+                |-- model.pt
+            |-- sketch
+                |-- model.pt
+
+```
 ## Adatation 진행
 - `best_cfgs` 내부 yaml 파일 내부 내용에 따라 실험 방법을 달리할 수 있습니다.
 
@@ -51,6 +65,11 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --e
 MODEL:
   A: 0.1 // 0.01 # 원하는 값 입력
 ```
+
+#  주요 코드
+## adapter를 추가한 모델
+./src/models/ResNet_para.py
+
 
 # 실험 결과
 ## a에 따른 실험결과
