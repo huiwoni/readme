@@ -60,6 +60,7 @@ The training logs and weights will be saved in the `./experiments` folder.
 - 다음 경로를 참고해 주시길 바랍니다. `./options/train`
 - 필요하시다면 DF2K 데이터 셋을 통해 사전학습된 모델은 [구글 드라이브](https://drive.google.com/drive/folders/1UFVLyONwlqJpWE6hEw7Kqqxw2GdBo43m?usp=sharing)에 저장되어 있습니다.
 - 다음 경로에 저장해 주시면 됩니다. ./experiments/pretrained/. (191,000 iterations까지 RGB이미지에 대해 학습시킨 모델 입니다.)
+
 파인튜닝을 위한 명령어
 ```
 CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 --master_port=1234 hat/train.py -opt options/train/train_HAT_thermalSRx8_48_cutblur_fineturn.yml --launcher pytorch
