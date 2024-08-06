@@ -8,7 +8,6 @@
 - BasicSR == 1.3.4.9
 - eninops
 
-## 설치
 ```
 python setup.py develop
 ```
