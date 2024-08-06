@@ -49,6 +49,7 @@ python hat/test.py -opt options/test/HAT_SRx8_quick.yml
 
 ## 사전학습
 - 다음 경로를 참고해 주시길 바랍니다. `./options/train`
+
 사전학습을 위한 명령어
 ```
 CUDA_VISIBLE_DEVICES=0,1,2,3 python -m torch.distributed.launch --nproc_per_node=4 --master_port=1234 hat/train.py -opt options/train/train_HAT_thermalSRx8_pre.yml --launcher pytorch
