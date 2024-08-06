@@ -1,7 +1,7 @@
 # [PBVS @ CVPR 2024 Thermal Images Super-resolution challenge- Track 1]
 
 이 방법을 통해 [TISR 챌린지](https://codalab.lisn.upsaclay.fr/competitions/17013#results)에서 PSNR 4위, SSIM 3위를 기록하였습니다. 
-
+# 구동 방법
 ## 가상환경
 - Python == 3.8.0
 - [PyTorch == 1.11.0](https://pytorch.kr/get-started/previous-versions/)
