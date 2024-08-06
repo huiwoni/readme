@@ -70,6 +70,16 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 ```
 - log와 weight 파일은 다음 경로에 저장됩니다. `./experiments`.
 
+# 주요 코드
+## 사전학습
+- 파인튜닝 때와 모델 구조를 동일하게 통일해 주기 위해 수정하였습니다.
+- DF2K 데이터 셋의 LR(Low Resolution) image를 x8 업스케일링을 진행하고 사전학습을 진행합니다.
+- `./hat/archs/not_aug_build_SR_model.py` 의 102 ~ 104 번 줄입니다.
+```        if self.gt.size() != self.lq.size():
+            scale = self.gt.size(2) // self.lq.size(2)
+            self.lq = F.interpolate(self.lq, scale_factor=scale, mode="nearest")```
+##
+
 # 실험 결과
 ## Optimizer에 따른 PSNR, SSIM 비교
 |     Optimizer    |        PSNR      |        SSIM       |
