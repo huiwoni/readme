@@ -171,8 +171,8 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 ## Optimizer에 따른 PSNR, SSIM 비교
 |     Optimizer    |        PSNR      |        SSIM       |
 |:----------------:|:----------------:|:-----------------:|
-|        Adam      | **    27.00   ** |       0.8233      |
-|       AdamW      |       26.99      | **    0.8234   ** |
+|        Adam      |     **27.00**    |       0.8233      |
+|       AdamW      |       26.99      |     **0.8234**    |
 
 ## Attention 방식에 따른 PSNR, SSIM 비교
 - RCA : 정규 분포를 가지는 벡터 v = (v_1, v_2, v_3)와 이미지를 혼합합니다.
