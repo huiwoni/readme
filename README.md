@@ -107,8 +107,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 
 |사전학습|파인 튜닝|
 |:----:|:----:|
-
-|Iteration|PSNR|SSIM|PSNR|SSIM|
+|Iteration|PSNR||SSIM|PSNR|SSIM||
 |:----:|:----:|:----:|:----:|:----:|
 |HAT|27.000|0.8233|
 |Blend|27.97|0.8223|
