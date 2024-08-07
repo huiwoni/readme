@@ -66,10 +66,75 @@ MODEL:
   A: 0.1 // 0.01 # 원하는 값 입력
 ```
 
-#  주요 코드
-## adapter를 추가한 모델
-./src/models/ResNet_para.py
+# 제안하는 방법 설명
 
+
+#  주요 코드
+## Adapter를 추가한 모델
+- Adapter를 추가한 모델을 구현하기 위해 ResNet50의 코드를 torch 라이브러리에서 가져와 수정하였습니다.
+- `./src/models/ResNet_para.py`의 142 ~ 174번 줄에 위치하고 있습니다.
+```
+        ################################################################# func start
+        self.a = a                                                                                a를 입력 받음
+        self.parallel = conv3x3(inplanes, planes * self.expansion, stride, groups, dilation)      adapter
+        ################################################################# func end
+
+    def forward(self, x: Tensor) -> Tensor:
+        identity = x
+
+        ################################################################# func start
+        para = self.parallel(x)                                                                   adapter 계산
+        ################################################################# func end
+
+        out = self.conv1(x)
+        out = self.bn1(out)
+        out = self.relu(out)
+
+        out = self.conv2(out)
+        out = self.bn2(out)
+        out = self.relu(out)
+
+        out = self.conv3(out)
+        out = self.bn3(out)
+
+        if self.downsample is not None:
+            identity = self.downsample(x)
+
+        out += identity
+        ################################################################# func start
+        out = out + self.a * para                                                                   relu 연산전 adapter 출력값에 를 곱하고 out 값에 더해줌
+        ################################################################# func end
+        out = self.relu(out)
+
+        return out
+```
+## Pseudo-label Refinement
+- 아래는 pseudo label을 정제하는 코드입니다..
+- `./src/methods/adacontrast_all_conv_refine.py`의 296 ~ 317번 줄에 위치합니다.
+```
+    def save_refine_psedo_lable(self, pseudo, epoch, iter):
+    ############################################################################## func start
+        start = iter * self.batch_size                                                                             # pseudo label bank의 위치를 설정, 매 순간 batch size 만큼의 pseudo label이 입력됨
+        end = start + len(pseudo)                                                                                  # 한 epoch에서 마지막으로 입력되는 이미지는 batch size와 다름. 
+        mask = torch.ones(len(pseudo), dtype=bool, device="cuda")                                                  # 마스크 정의
+
+        self.psedo_lable_bank[start:end, epoch] = pseudo                                                           # pseudo label bank에 pseudo label 입력
+
+
+        if epoch != 0:
+        ######################################################### if start
+            select_past = range(0, epoch)                                                                          # 첫번째 epoch부터 현재 epoch까지 range 설정
+
+            for i in range(len(pseudo)):
+            ######################################## for start
+                mask[i] = len(torch.where(self.psedo_lable_bank[(start + i), select_past] != pseudo[i])[0]) < 1    # 첫번째 epoch부터 현재 epoch까지 pseudo label 확인후 다른 것이 있다면 False, 모두 같다면 True 저장
+            ######################################## for end
+
+        ############################################################## if end
+
+    ############################################################################## func end
+        return torch.where(mask == True)[0]                                                                        # 마스크에서 True인 위치를 반환
+```
 
 # 실험 결과
 ## a에 따른 실험결과
@@ -97,7 +162,7 @@ MODEL:
   <tr>
     <th rowspan="2">Domain adapter</th>
     <th rowspan="2"> BatchNorm</th>
-    <th rowspan="2">ResNet Bloc</th>
+    <th rowspan="2">ResNet Block </th>
     <th rowspan="2">   Accuracy   </th>
   </tr>
   <tr>
