@@ -43,8 +43,8 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --e
                 |-- model.pt
 
 ```
-## Adaptation
-- `best_cfgs` 내부 yaml 파일 내부 내용에 따라 실험 방법을 달리할 수 있습니다.
+## Test-time Adaptation(TTA)
+### 명령어
 
 ```
  CUDA_VISIBLE_DEVICES=0,1,2,3 python challenge_test_time.py --cfg ./best_cfgs/[yaml 파일 이름] --output_dir ./output/test-time-evaluation/"[실험 이름]"
@@ -61,6 +61,7 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --e
 ### a의 값 변화에 따른 실험 결과 확인 방법
 - Domain Adapter를 추가한 실험의 경우 yaml 파일 내부 `A` 의 값을 수정하여 실험을 다르게 할 수 있습니다.
 - 예시
+- 
 ```
 MODEL:
   A: 0.1 // 0.01 # 원하는 값 입력
