@@ -59,9 +59,11 @@
 
 1. 두 개의 네트워크 생성 후 각각 순재생 비디오, 역재생 비디오를 입력
 2. 두 네트워크는 매 시점에 대한 Class score(cs), 액션의 Start time, End time까지의 거리 ds, de를 출력
+- 순재생 비디오 기준
 3. 두 네트워크의 cs, ds, de를 순재생 비디오 기준으로 정렬
 4. 순재생 ds와 역재생 de , 역재생 de와 순재생 ds를 각각 위아래로 concat
 5. (순재생 ds-역재생 de), (순재생 de-역재생 ds), cs를 순서로  옆으로 concat 후 FC layer 입력
+- 역재생 비디오 기준
 6. 두 네트워크의 cs, ds, de를 역재생 비디오 기준으로 정렬
 7. 역재생 ds와 순재생 de , 순재생 de와 역재생 ds를 각각 위아래로 concat
 8. (역재생 ds-순재생 de), (역재생 de-순재생 ds), cs를 순서로 양옆으로 concat 후 FC layer 입력 
