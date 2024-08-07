@@ -45,23 +45,31 @@ pip install torch==1.12.1+cu113 torchvision==0.13.1+cu113 torchaudio==0.12.1 --e
 ```
 ## Test-time Adaptation(TTA)
 ### 명령어
+- [실험명]은 원하는 실험명을 일력해 주시면 됩니다.
 
 ```
- CUDA_VISIBLE_DEVICES=0,1,2,3 python challenge_test_time.py --cfg ./best_cfgs/[yaml 파일 이름] --output_dir ./output/test-time-evaluation/"[실험 이름]"
+ CUDA_VISIBLE_DEVICES=0,1,2,3 python challenge_test_time.py --cfg ./best_cfgs/[yaml 파일 이름] --output_dir ./output/test-time-evaluation/"[실험명]"
 ```
  
 ### 주요 yaml 파일명 및 실험 방법 정리
-- adacontrast.yaml : Domain Adapter를 추가하지 않은 실험, 모델 내부 모든 파라미터를 업데이트 합니다.
-- adacontrast_bn.yaml : Domain Adapter를 추가하지 않은 실험, 모델 내부 Batch Normalization Layer의 파라미터를 업데이트 합니다.
-- adacontrast_conv.yaml : Domain Adapter를 추가한 실험, Domain Adapter의 파라미터 만을 업데이트 합니다.
-- adacontrast_all_conv.yaml : Domain Adapter를 추가한 실험, Domain Adapter와 모델 내부 모든 파라미터를 업데이트 합니다.
-- adacontrast_bn_conv.yaml : Domain Adapter를 추가한 실험, Domain Adapter와 모델 내부 Batch Normalization Layer의 파라미터를 업데이트 합니다.
-- adacontrast_all_conv_refine.yaml : Domain Adapter를 추가한 실험, Domain Adapter와 모델 내부 모든 파라미터를 업데이트 합니다.
-- 
-### a의 값 변화에 따른 실험 결과 확인 방법
+#### Domain Adapter를 추가하지 않은 실험
+```
+adacontrast.yaml : 모델 내부 모든 파라미터를 업데이트 합니다.
+adacontrast_bn.yaml : 모델 내부 Batch Normalization Layer의 파라미터를 업데이트 합니다.
+```
+#### Domain Adapter를 추가한 실험
+```
+adacontrast_conv.yaml : Domain Adapter의 파라미터 만을 업데이트 합니다.
+adacontrast_all_conv.yaml : Domain Adapter와 모델 내부 모든 파라미터를 업데이트 합니다.
+adacontrast_bn_conv.yaml : Domain Adapter와 모델 내부 Batch Normalization Layer의 파라미터를 업데이트 합니다.
+```
+#### Domain Adapter, IPRF를 추가한 실험
+```
+adacontrast_all_conv_refine.yaml : Domain Adapter와 모델 내부 모든 파라미터를 업데이트 합니다.
+```
+#### a의 값 변화에 따른 실험
 - Domain Adapter를 추가한 실험의 경우 yaml 파일 내부 `A` 의 값을 수정하여 실험을 다르게 할 수 있습니다.
 - 예시
-- 
 ```
 MODEL:
   A: 0.1 // 0.01 # 원하는 값 입력
@@ -81,7 +89,7 @@ MODEL:
 - 하나라도 다른 Pseudo-label을 출력하였다면 제거됩니다. 
 
 #  주요 코드
-## Domain Adapter를 추가한 모델
+## Domain Adapter를 추가한 ResNet50
 - Domain Adapter를 추가한 모델을 구현하기 위해 ResNet50의 코드를 torch 라이브러리에서 가져와 수정하였습니다.
 - `./src/models/ResNet_para.py`의 142 ~ 174번 줄에 위치하고 있습니다.
 ```
@@ -126,8 +134,8 @@ MODEL:
 ```
     def save_refine_psedo_lable(self, pseudo, epoch, iter):
     ############################################################################## func start
-        start = iter * self.batch_size                                                                             # Pseudo-label Bank의 위치를 설정, 매 순간 batch size 만큼의 pseudo label이 입력됨
-        end = start + len(pseudo)                                                                                  # 한 epoch에서 마지막으로 입력되는 이미지는 batch size와 다름. 
+        start = iter * self.batch_size                                                                             # Pseudo-label Bank의 위치를 설정, 매 순간 Batch size 만큼의 Pseudo-label이 입력됨
+        end = start + len(pseudo)                                                                                  # 한 Epoch에서 마지막으로 입력되는 이미지는 Batch size와 다름. 
         mask = torch.ones(len(pseudo), dtype=bool, device="cuda")                                                  # 마스크 정의
 
         self.psedo_lable_bank[start:end, epoch] = pseudo                                                           # Pseudo-label Bank에 Pseudo-label 입력
@@ -135,11 +143,11 @@ MODEL:
 
         if epoch != 0:
         ######################################################### if start
-            select_past = range(0, epoch)                                                                          # 첫번째 epoch부터 현재 epoch까지 range 설정
+            select_past = range(0, epoch)                                                                          # 첫번째 Epoch부터 현재 Epoch까지 Range 설정
 
             for i in range(len(pseudo)):
             ######################################## for start
-                mask[i] = len(torch.where(self.psedo_lable_bank[(start + i), select_past] != pseudo[i])[0]) < 1    # 첫번째 epoch부터 현재 epoch까지 Pseudo-label 확인 후 다른 것이 있다면 False, 모두 같다면 True 저장
+                mask[i] = len(torch.where(self.psedo_lable_bank[(start + i), select_past] != pseudo[i])[0]) < 1    # 첫 Epoch부터 현재 Epoch까지 Pseudo-label 확인 후 다른 것이 있다면 False, 모두 같다면 True 저장
             ######################################## for end
 
         ############################################################## if end
@@ -154,7 +162,7 @@ MODEL:
 
 ## a의 값 변화에 따른 성능 변화
 - Domain Adapter를 부착하고 Domain Adapter 내부의 파라미터만을 업데이트 하였을 때의 실험결과입니다.
-- 평균 정확도를 측정할 때 사용하지 않는 C->P로 도메인이 변화하는 경우에 대해 성능을 평가하였습니다.
+- 평균 정확도를 측정할 때 사용하지 않는 C->P로 도메인이 변화하는 경우에 대해 정확도를 측정하였습니다.
 <table><thead>
   <tr>
     <th>a</th>
@@ -175,7 +183,7 @@ MODEL:
 </table>
 
 ## 파라미터 업데이트 위치에 따른 성능 비교
-- 파라미터를 업데이트 하는 위치에 따라 성능을 비교한 결과입니다.
+- 파라미터를 업데이트 하는 위치에 따라 평균 정확도를 측정하고 비교한 결과입니다.
 
 <table><thead>
   <tr>
@@ -227,6 +235,7 @@ MODEL:
 </table>
 
 ## Ablation Study
+- Domain Adapter, IPRF를 순차적으로 추가하며 평균 정확도를 측정한 결과입니다.
 <table><thead>
   <tr>
     <th> Domain Adapter </th>
