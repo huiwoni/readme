@@ -175,6 +175,9 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |       AdamW      |       26.99      |     **0.8234**    |
 
 ## Attention 방식에 따른 PSNR, SSIM 비교
+- RCA[2] : Residual Channel Attention[2]
+- RCSA[3] : Residual Channel Spatial Attention[3]
+- RCA[2] + CSA[4] : Residual Channel Attention[2] + Channel Spatial Attention[4]
 |Method|PSNR|SSIM|
 |:----:|:----:|:----:|
 |RCA[2]|**27.00**|**0.8233**|
@@ -182,6 +185,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |RCA[2] + CSA[4]|26.96|0.8228|
 
 ## Augmentation 방법에 따른 PSNR, SSIM 비교
+
 |Method|PSNR|SSIM|
 |:----:|:----:|:----:|
 |HAT[2]|27.000|0.8233|
@@ -194,7 +198,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 |MoA[8]|26.96|0.8241|
 
 ## Test-time Data Augmentation 방식 적용 결과
-- 적용전은 Cutblur를 적용하여 모델을 학습시킨 결과 입니다.
+- 적용전은 Cutblur[8]를 적용하여 모델을 학습시킨 결과 입니다.
 
 | TDA | PSNR |  SSIM  |
 |:-----:|:-----:|:------:|
