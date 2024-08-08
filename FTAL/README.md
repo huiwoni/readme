@@ -147,9 +147,9 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 ## 실험 1, 실험 1-1
 - Model, Optimizer, Scheduler, Model_ema을 모두 순재생 비디오 및 역재생 비디오를 위해 2개씩 정의해 구성한다.
 - 예시
-'''
+```
   for_model, back_model, for_optimizer, back_optimizer, for_scheduler, back_scheduler, for_model_ema, back_model_ema
-'''
+```
 - 두 네트워크가 출력한 Loss를 더하는 곳의 위치는 `/opentad/cores/train_bidirect_engine.py`의 64~71번 줄에서 확인 가능합니다.
 ## 실험 2
 - 실험 2에서 새로 추가한 모듈만 학습 가능하도록 하지 않고, Detector도 함께 학습이 되도록 하였습니다.
