@@ -290,17 +290,17 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 |     실험 3-1     |     -          |     -         |
 |     실험 3-2     |     -          |     -         |
 ## 실험 3-2 실험 분석
+- 3d conv의 size = (2,3,3), padding = (0,1,1), stride = (1,1,1)로 설정에서 실험을 진행하였습니다.
 ### cs 값 변화 분석
-
 순재생 비디오 기준 실험
 - 정답 Class 기준 Frame 방향
--> Action이 존재하는 Frame과 Action 사이의 Frame에 해당하는 score가 대부분 가장 작았습니다.
+-> Action이 존재하는 Frame의 score가 대부분 가장 작았습니다.
 - Action이 존재하는 Frame 기준
 -> 모든 Class에 대해 정답인 Class의 score가 대부분 가장 작았습니다.
 
 역재생 비디오 기준 실험
 - 정답 Class 기준 Frame 방향1
--> Action이 존재하는 Frame과 Action 사이의 Frame에 해당하는 score가 대부분 가장 컸습니다.
+-> Action이 존재하는 Frame의 score가 대부분 가장 컸습니다.
 - Action이 존재하는 Frame 기준
 -> 모든 Class에 대해 정답인 Class의 score가 대부분 가장 컸습니다.
 
