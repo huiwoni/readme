@@ -1,4 +1,4 @@
-# [순재생, 역재생 비디오를 활용한 연구 완전지도 시간적 행동 검출 연구]
+# [Temporal Action Detection Using Reverse- and Forward-Playback Videos]
 
 코드는 A6000 `/mnt/HDD2/HW/OpenTAD`에 위치하고 있습니다.
 
