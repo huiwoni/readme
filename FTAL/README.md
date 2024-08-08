@@ -106,6 +106,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 8. (역재생 ds-순재생 de), (역재생 de-순재생 ds), cs를 순서로 양옆으로 concat 후 FC layer 입력한다.
 9. 최종적으로 순재생 비디오와 역재생 비디오 기준의 cs, ds, de를 각각 출력한다.
 10. 최종 Loss를 계산하고 Backward를 진행한다.
+![3-1](https://github.com/user-attachments/assets/d4c84edf-5474-45a9-8bf6-2d122403bf93)
 
 ## 실험 3-2
 1. 실험 1-1의 단계 1, 단계 2까지 동일하게 진행한다.
@@ -124,6 +125,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 - 최종 출력
 11. 최종적으로 순재생 비디오와 역재생 비디오 기준의 cs, ds, de를 각각 출력한다.
 12. 최종 Loss를 계산하고 Backward를 진행한다.
+![3-2](https://github.com/user-attachments/assets/28efecd2-b340-4e2c-ace7-6d3fb6ad8dba)
 
 ## 실험 3-3
 1. 실험 1-1의 단계 1, 단계 2까지 동일하게 진행한다.
@@ -142,6 +144,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 - 최종 출력
 11. 최종적으로 순재생 비디오와 역재생 비디오 기준의 cs, ds, de를 각각 출력한다.
 12. 최종 Loss를 계산하고 Backward를 진행한다.
+![3-3](https://github.com/user-attachments/assets/8b9ddf67-d7dc-4e5d-9dd1-25bd06b50a8a)
 
 # 주요 코드
 ## 실험 1, 실험 1-1
