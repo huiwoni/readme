@@ -16,7 +16,7 @@
 - `./tools/make_annotation.py` 를 통해 역재생 비디오의 annotation 파일을 생성할 수 있습니다.
 ## Backbone
 - Backbone은 다음 [사이트](https://github.com/sming256/OpenTAD/tree/main/configs/adatad)에서 다운 받을 수 있습니다.
-- 모든 실험은 VideoMAE-H 모델을 통해 진행했습니다.
+- 모든 실험은 VideoMAE-H Backbone 모델을 통해 진행했습니다.
 
 ## 주요 디렉토리
 ```
@@ -154,8 +154,8 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 ## 실험 2
 - 실험 2에서 새로 추가한 모듈만 학습 가능하도록 하지 않고, Detector도 함께 학습이 되도록 하였습니다.
 - 이에 대한 수정이 필요합니다.
-- 현재 코드는 Adatad에서 사용하는 adapter와 동일한 구조를 가지며, 기존 Adatad의 adapter 후방에 부착됩니다.
-- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 269 ~ 274번줄, 290~292번줄에서 확인가능합니다.
+- 현재 코드는 Adatad[1]에서 사용하는 adapter와 동일한 구조를 가지며, 기존 Adatad[1]의 adapter 후방에 부착됩니다.
+- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 269 ~ 274번줄, 290~292번줄에서 확인 가능합니다.
 ```
 # 269 ~ 274 : 새로운 adpater 정의
 self.bi_adapter = Adapter(
