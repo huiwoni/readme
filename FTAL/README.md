@@ -13,7 +13,7 @@
 ### 역재생 비디오 생성
 - `./tools/Reverse_Playback_Video_Generator.py`를 통해 역재생 비디오를 생성할 수 있습니다.
 - 51 번줄에 순재생 비디오의 경로를 입력하고, 52 번줄에 역재생 비디오를 저장할 경로를 입력해 주시면 됩니다.
-- `./tools/make_annotation.py` 를 통해 역재생 비디오의 annotation 파일을 생성할 수 있습니다.
+- `./tools/make_annotation.py` 를 통해 역재생 비디오의 Annotation 파일을 생성할 수 있습니다.
 ## Backbone
 - Backbone은 다음 [사이트](https://github.com/sming256/OpenTAD/tree/main/configs/adatad)에서 다운 받을 수 있습니다.
 - 모든 실험은 VideoMAE-H Backbone 모델을 통해 진행했습니다.
@@ -157,7 +157,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 ## 실험 2
 - 실험 2에서 새로 추가한 모듈만 학습 가능하도록 하지 않고, Detector도 함께 학습이 되도록 하였습니다.
 - 이에 대한 수정이 필요합니다.
-- 현재 코드는 Adatad[1]에서 사용하는 adapter와 동일한 구조를 가지며, 기존 Adatad[1]의 adapter 후방에 부착됩니다.
+- 현재 코드는 Adatad[1]에서 사용하는 Adapter와 동일한 구조를 가지며, 기존 Adatad[1]의 Adapter 후방에 부착됩니다.
 - 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 269 ~ 274번 줄, 290~292번 줄에서 확인 가능합니다.
 ```
 # 269 ~ 274 : 새로운 adpater 정의
@@ -292,6 +292,27 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 |     실험 2       |     73.91      |     73.12     |
 |     실험 3-1     |     -          |     -         |
 |     실험 3-2     |     -          |     -         |
+## 실험 3-1 실험 분석
+### cs 값 변화 분석
+순재생 비디오 기준 실험
+- 정답 Class 기준 Frame 방향
+* 이전, 이후의 score가 action 이 존재하는 구간 보다 더 큼
+- Action이 존재하는 Frame 기준
+* 모든 Class에 대해 정답인 Class의 score가 가장 큼
+* 모든 Class의 score 차이가 거의 없음
+역재생 비디오 기준 실험
+- 정답 Class 기준 Frame 방향
+* 이전, 이후의 score가 action 이 존재한는 구간 보다 더 큼
+- Action이 존재하는 Frame 기준
+* 정답인 Class의 socre가 가장 큰 값을 가지지 않음
+* 모든 Class의 score중 중간 순위 해당
+* 모든 Class의 score 차이가 거의 없음
+결론
+-FC layer 를 통해 GT에 가까운 출력을 내지 못함
+![image](https://github.com/user-attachments/assets/1d7e4f35-d1c7-4213-979b-c0b07acf7ec2)
+
+![image](https://github.com/user-attachments/assets/3a8c0fb7-ccdf-4a1d-aa64-79ae3228f6db)
+
 ## 실험 3-2 실험 분석
 - 3d conv의 size = (2,3,3), padding = (0,1,1), stride = (1,1,1)로 설정에서 실험을 진행하였습니다.
 ### cs 값 변화 분석
