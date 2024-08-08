@@ -235,12 +235,12 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
         for_reg_pred = torch.concat((for_reg_pred_st, for_reg_pred_ed), dim = 2)                                    # (순재생 ds - 순재생 de) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
         back_reg_pred = torch.concat((back_reg_pred_ed, back_reg_pred_st), dim=2)                                   # (역재생 de - 역재생 ds) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
         cls_pred = torch.concat((for_cls_pred, back_cls_pred), dim=1)                                               # (순재생 cs - 역재생 cs) concat, tensor : (1, 1512, 20) -> tensor : (1, 3024, 20)
-        reg_pred = torch.concat((for_reg_pred, back_reg_pred), dim=1)                                               # (순재생 cs - 역재생 cs) concat, tensor : (1, 1512, 2) -> tensor : (1, 3024, 2)
+        reg_pred = torch.concat((for_reg_pred, back_reg_pred), dim=1)                                               # (순재생 ds, de - 역재생 ds, de) concat, tensor : (1, 1512, 2) -> tensor : (1, 3024, 2)
         all_pred = torch.concat((reg_pred, cls_pred), dim=2)                                                        # ((de, ds) - cs) concat, tensor : (1, 3024, 2), (1, 3024, 20) -> tensor : (1, 3024, 22)
 
         all_pred = all_pred.squeeze(dim = 0)                                                                        # tensor : (1, 3024, 22) -> tensor : (3024, 22)
         all_pred = all_pred.permute(1, 0)                                                                           # tensor : (3024, 22) -> tensor : (22,3024)
-        all_pred = self.forward_fc(all_pred)                                                                        # tensor : (22,3 024) * weight : (3024, 1512) = tensor : (22, 1512) 
+        all_pred = self.forward_fc(all_pred)                                                                        # tensor : (22, 3024) * FC layer : (3024, 1512) = tensor : (22, 1512) 
         all_pred = all_pred.permute(1, 0)                                                                           # tensor : (22, 1512) -> tensor : (1512, 22) 
         all_pred = all_pred.unsqueeze(dim=0)                                                                        # tensor : (1512, 22) -> tensor : (1, 1512, 22) 
 
@@ -253,3 +253,76 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 ```
 
 ### 3-2 최종 예측
+- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 918~936, 938~957번줄에 위치합니다.
+```
+    def forward_prediction(self, for_reg_pred_st, for_reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred):
+        for_reg_pred = torch.concat((for_reg_pred_st, for_reg_pred_ed), dim = 2)                                    # (순재생 ds - 순재생 de) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
+        back_reg_pred = torch.concat((back_reg_pred_ed, back_reg_pred_st), dim=2)                                   # (역재생 de - 역재생 ds) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
+        reg_pred = torch.concat((for_reg_pred, back_reg_pred), dim=1)                                               # (순재생 ds, de - 역재생 ds, de) concat, tensor : (1, 1512, 2) -> tensor : (1, 3024, 2)
+        reg_pred = reg_pred.squeeze(dim = 0))                                                                       # tensor : (1, 1512, 2) -> tensor : (1512, 2) 
+        reg_pred = reg_pred.permute(1, 0)                                                                           # tensor : (1512, 2)  -> tensor : (2, 1512) 
+
+        reg_pred = self.forward_fc(reg_pred)                                                                        # tensor : (2, 1512) * FC layer : (1512, 1512) = tensor : (2, 1512)
+ 
+        reg_pred = reg_pred.permute(1, 0)                                                                           # tensor : (2, 1512) -> tensor : (1512, 2)              
+        reg_pred = reg_pred.unsqueeze(dim=0)                                                                        # tensor : (2, 1512) -> tensor : (1512, 2)    
+
+        final_reg_pred = F.relu(reg_pred)                                                                           # Relu
+
+        cls_pred = torch.concat((for_cls_pred, back_cls_pred), dim=0)                                               # (순재생 cs - 역재생 cs) concat, tensor : (1, 1512, 20) -> tensor : (1, 3024, 20)
+        final_cls_pred = self.forward_conv(cls_pred.unsqueeze(dim=0))                                               # 3d conv
+        final_cls_pred = final_cls_pred.squeeze(dim=0)                                                              # (1, 1, 1512, 20) -> (1, 1512, 20)
+
+        return final_reg_pred, final_cls_pred
+```
+# 실험 결과
+## 각 방법에 대한 평균 mAP 비교
+- 실험 2는 다시 코드를 작성하고 진행해야 합니다.
+- 실험 3-1, 실험 3-2는 Loss가 100 이상으로 출력되기 때문에 분석 진행 입니다.
+- 실험 3-2에서 실험을 진행할 때 3d conv의 size = (2,3,3), padding = (0,1,1), stride = (1,1,1)로 설정하였습니다.
+
+|     Method       |     순방향     |     역방향    |
+|------------------|----------------|-------------- |
+|     기존 방법    |     73.94      |     73.43     |
+|     실험 1       |     73.91      |     73.58     |
+|     실험 1-1     |     73.15      |     73.01     |
+|     실험 2       |     73.91      |     73.12     |
+|     실험 3-1     |     -          |     -         |
+|     실험 3-2     |     -          |     -         |
+## 실험 3-2 실험 분석
+### cs 값 변화 분석
+
+순재생 비디오 기준 실험
+- 정답 Class 기준 Frame 방향
+-> Action이 존재하는 Frame과 Action 사이의 Frame에 해당하는 score가 대부분 가장 작았습니다.
+- Action이 존재하는 Frame 기준
+-> 모든 Class에 대해 정답인 Class의 score가 대부분 가장 작았습니다.
+
+역재생 비디오 기준 실험
+- 정답 Class 기준 Frame 방향1
+-> Action이 존재하는 Frame과 Action 사이의 Frame에 해당하는 score가 대부분 가장 컸습니다.
+- Action이 존재하는 Frame 기준
+-> 모든 Class에 대해 정답인 Class의 score가 대부분 가장 컸습니다.
+
+정리
+- 순재생 비디오 기준으로 정렬하여 3d conv를 통과한 값이 기대와 반대로 출력을 내고 있습니다.
+- 순재생 비디오 기준 출력은 코드상 구현이 잘못되었을 확률이 있어 잘못된 부분이 있는지 확인해 보았습니다.
+- 역재생 비디오 기준으로 정렬하여 3d conv를 통과한 값이 GT와 가까운 적절한 출력을 내고 있습니다.
+
+#### video_validation_0000185.mp4
+![image](https://github.com/user-attachments/assets/e2dc2f51-8f3a-43a6-a204-a4362a79d193)
+#### video_validation_0000189.mp4
+![image](https://github.com/user-attachments/assets/4aabc073-d305-4aa4-8f13-ef40b419c9a2)
+#### video_validation_0000188.mp4
+![image](https://github.com/user-attachments/assets/3a5dec1d-ba21-41fb-a71c-200c2bf2c88d)
+### 순재생 비디오 기준 정렬 확인
+- 역재생 비디오 기준 cs를 순재생 비디오 기준으로 나열 후 비교하였습니다.
+- GT와 동일한 위치를 관찰했을 때 가장 작은 값이 위치하거나 주변 score보다 낮은 값들이 위치합니다.
+![image](https://github.com/user-attachments/assets/774328be-cca3-432e-91f1-bd60fa070029)
+### 3d conv 작동 확인
+- 실제 3d conv의 weight, bias 값을 확인하고, GT주변에서 연산이 생각한 것과 동일하게 되고 있는지 확인해 보았습니다.
+- 이때 역재생 비디오에 대한 cs는 순재생 비디오 기준으로 정렬되어 있습니다.
+- 직접 계산한 값과 실제 출력값이 일치하는 것을 확인할 수 있습니다.
+![image](https://github.com/user-attachments/assets/1141e934-e448-495d-837f-b99263c5584f)
+
+
