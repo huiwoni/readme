@@ -148,7 +148,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 
 # 주요 코드
 ## 실험 1, 실험 1-1
-- Model, Optimizer, Scheduler, Model_ema을 모두 순재생 비디오 및 역재생 비디오를 위해 2개씩 정의해 구성한다.
+- Model, Optimizer, Scheduler, Model_ema을 모두 순재생 비디오 및 역재생 비디오를 위해 2개씩 정의해 구성합니다.
 - 예시
 ```
   for_model, back_model, for_optimizer, back_optimizer, for_scheduler, back_scheduler, for_model_ema, back_model_ema
@@ -281,7 +281,7 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 # 실험 결과
 ## 각 방법에 대한 평균 mAP 비교
 - 실험 2는 다시 코드를 작성하고 진행해야 합니다.
-- 실험 3-1, 실험 3-2는 Loss가 100 이상으로 출력되기 때문에 분석 진행 입니다.
+- 실험 3-1, 실험 3-2는 Loss가 100 이상으로 출력되기 때문에 추가 분석을 진행 하였습니다.
 - 실험 3-2에서 실험을 진행할 때 3d conv의 size = (2,3,3), padding = (0,1,1), stride = (1,1,1)로 설정하였습니다.
 
 |     Method       |     순방향     |     역방향    |
