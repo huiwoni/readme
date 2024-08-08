@@ -47,9 +47,9 @@
 
 ## 학습
 ### 실험 1 
-'''
+```
 torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=localhost:0 tools/train_exp_2.py configs/adatad/thumos/e2e_thumos_videomae_h_768x1_160_adapter_bi_exp1.py
-'''
+```
 ### 실험 1-1
 ```
 torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=localhost:0 tools/train_exp_2.py configs/adatad/thumos/e2e_thumos_videomae_h_768x1_160_adapter_bi_exp1.py --for_resume [순재생 비디오 사전학습 모델 경로],--back_resume [역재생 비디오 사전학습 모델 경로]
