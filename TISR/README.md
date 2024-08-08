@@ -178,6 +178,7 @@ CUDA_VISIBLE_DEVICES=0,1 python -m torch.distributed.launch --nproc_per_node=2 -
 - RCA[2] : Residual Channel Attention[2]
 - RCSA[3] : Residual Channel Spatial Attention[3]
 - RCA[2] + CSA[4] : Residual Channel Attention[2] + Channel Spatial Attention[4]
+  
 |Method|PSNR|SSIM|
 |:----:|:----:|:----:|
 |RCA[2]|**27.00**|**0.8233**|
