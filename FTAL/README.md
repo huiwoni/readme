@@ -113,10 +113,9 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 2. 두 네트워크는 매 시점에 대한 Class score(cs), 액션의 Start time, End time까지의 거리 ds, de를 출력한다.
 - 순재생 비디오 기준
 3. 두 네트워크가 출력한 cs, ds, de를 순재생 비디오 기준으로 정렬한다.
-4. 두 네트워크가 출력한 ds, de를 순재생 비디오 기준으로 정렬한다.
-5. 순재생 ds와 역재생 de , 역재생 de와 순재생 ds를 각각 위아래로 concat한다.
-6. 이전 단계에서 생성한 두개의 값을 양옆으로 concat 후 FC layer 입력한다.
-7. 순재생 비디오 기준으로 cs를 정렬하고 stack 후 3d conv 에 입력한다. 
+4. 순재생 ds와 역재생 de , 역재생 de와 순재생 ds를 각각 위아래로 concat한다.
+5. 이전 단계에서 생성한 두개의 값을 양옆으로 concat 후 FC layer 입력한다.
+6. 순재생 비디오 기준으로 cs를 정렬하고 stack 후 3d conv 에 입력한다. 
 - 역재생 비디오 기준
 7. 두 네트워크가 출력한 ds, de를 역재생 비디오 기준으로 정렬한다.
 8. 역재생 ds와 순재생 de , 순재생 de와 역재생 ds를 각각 위아래로 concat한다.
