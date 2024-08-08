@@ -104,6 +104,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 6. 두 네트워크의 cs, ds, de를 역재생 비디오 기준으로 정렬한다.
 7. 역재생 ds와 순재생 de , 순재생 de와 역재생 ds를 각각 위아래로 concat한다.
 8. (역재생 ds-순재생 de), (역재생 de-순재생 ds), cs를 순서로 양옆으로 concat 후 FC layer 입력한다.
+- 최종 출력
 9. 최종적으로 순재생 비디오와 역재생 비디오 기준의 cs, ds, de를 각각 출력한다.
 10. 최종 Loss를 계산하고 Backward를 진행한다.
 ![3-1](https://github.com/user-attachments/assets/d4c84edf-5474-45a9-8bf6-2d122403bf93)
