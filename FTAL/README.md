@@ -326,3 +326,5 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 ![image](https://github.com/user-attachments/assets/1141e934-e448-495d-837f-b99263c5584f)
 
 
+# Reference
+[1] Liu, Shuming and Zhang, Chen-Lin and Zhao, Chen and Ghanem, Bernard, "End-to-End Temporal Action Detection with 1B Parameters Across 1000 Frames," Proceedings of the IEEE/CVF Conference on Computer Vision and Pattern Recognition (CVPR), pages 18591--18601, 2024.
