@@ -158,7 +158,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 - 실험 2에서 새로 추가한 모듈만 학습 가능하도록 하지 않고, Detector도 함께 학습이 되도록 하였습니다.
 - 이에 대한 수정이 필요합니다.
 - 현재 코드는 Adatad[1]에서 사용하는 adapter와 동일한 구조를 가지며, 기존 Adatad[1]의 adapter 후방에 부착됩니다.
-- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 269 ~ 274번줄, 290~292번줄에서 확인 가능합니다.
+- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 269 ~ 274번 줄, 290~292번 줄에서 확인 가능합니다.
 ```
 # 269 ~ 274 : 새로운 adpater 정의
 self.bi_adapter = Adapter(
@@ -173,7 +173,7 @@ if self.use_adapter:
     x = self.bi_adapter(x, h, w)               # 새로 추가한 adapter
 ```
 - 또한 Backbone에서 새로 추가한 adapter만 학습이 가능하도록 하였습니다.
-- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`497~502번 줄에서 확인 가능합니다.
+- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 497~502번 줄에서 확인 가능합니다.
 ```
 for block in self.blocks:
     for m, n in block.named_children():
@@ -232,7 +232,7 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 ```
 
 ### 3-1 최종 예측
-- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 341~359, 361~380번줄에 위치합니다.
+- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 341~359, 361~380번 줄에 위치합니다.
 ```
     def forward_prediction(self, for_reg_pred_st, for_reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred):
         for_reg_pred = torch.concat((for_reg_pred_st, for_reg_pred_ed), dim = 2)                                    # (순재생 ds - 순재생 de) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
@@ -256,7 +256,7 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 ```
 
 ### 3-2 최종 예측
-- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 918~936, 938~957번줄에 위치합니다.
+- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 918~936, 938~957번 줄에 위치합니다.
 ```
     def forward_prediction(self, for_reg_pred_st, for_reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred):
         for_reg_pred = torch.concat((for_reg_pred_st, for_reg_pred_ed), dim = 2)                                    # (순재생 ds - 순재생 de) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
