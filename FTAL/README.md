@@ -11,7 +11,7 @@
 - THUMOS14 데이터 셋은 다음 [공식 사이트](https://www.crcv.ucf.edu/THUMOS14/download.html)에서 다운 받을 수 있습니다.
 - 또한 다음 [사이트](https://github.com/sming256/OpenTAD/blob/main/tools/prepare_data/thumos/README.md)를 참고해 주시기 바랍니다.
 ### 역재생 비디오 생성
-- './tools/Reverse_Playback_Video_Generator.py'를 통해 역재생 비디오를 생성할 수 있습니다.
+- `./tools/Reverse_Playback_Video_Generator.py`를 통해 역재생 비디오를 생성할 수 있습니다.
 - 51 번줄에 순재생 비디오의 경로를 입력하고, 52 번줄에 역재생 비디오를 저장할 경로를 입력해 주시면 됩니다.
 - `./tools/make_annotation.py` 를 통해 역재생 비디오의 annotation 파일을 생성할 수 있습니다.
 ## Backbone
