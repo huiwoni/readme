@@ -153,12 +153,12 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 ```
   for_model, back_model, for_optimizer, back_optimizer, for_scheduler, back_scheduler, for_model_ema, back_model_ema
 ```
-- 두 네트워크가 출력한 Loss를 더하는 곳의 위치는 `/opentad/cores/train_bidirect_engine.py`의 64~71번 줄에서 확인 가능합니다.
+- 두 네트워크가 출력한 Loss를 더하는 곳의 위치는 `/opentad/cores/train_bidirect_engine.py`의 64 ~ 71번 줄에서 확인 가능합니다.
 ## 실험 2
 - 실험 2에서 새로 추가한 모듈만 학습 가능하도록 하지 않고, Detector도 함께 학습이 되도록 하였습니다.
 - 이에 대한 수정이 필요합니다.
 - 현재 코드는 Adatad[1]에서 사용하는 Adapter와 동일한 구조를 가지며, 기존 Adatad[1]의 Adapter 후방에 부착됩니다.
-- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 269 ~ 274번 줄, 290~292번 줄에서 확인 가능합니다.
+- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 269 ~ 274번 줄, 290 ~ 292번 줄에서 확인 가능합니다.
 ```
 # 269 ~ 274 : 새로운 adpater 정의
 self.bi_adapter = Adapter(
@@ -167,13 +167,13 @@ self.bi_adapter = Adapter(
     dilation=1,
     temporal_size=temporal_size,
 )
-# 290~292 
+# 290 ~ 292 
 if self.use_adapter:                  
-    x = self.adapter(x, h, w)                  # 기존 Adatad의 adapter
-    x = self.bi_adapter(x, h, w)               # 새로 추가한 adapter
+    x = self.adapter(x, h, w)                  # 기존 Adatad의 Adapter
+    x = self.bi_adapter(x, h, w)               # 새로 추가한 Adapter
 ```
-- 또한 Backbone에서 새로 추가한 adapter만 학습이 가능하도록 하였습니다.
-- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 497~502번 줄에서 확인 가능합니다.
+- 또한 Backbone에서 새로 추가한 Adapter만 학습이 가능하도록 하였습니다.
+- 이에 대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`의 497 ~ 502번 줄에서 확인 가능합니다.
 ```
 for block in self.blocks:
     for m, n in block.named_children():
@@ -185,7 +185,7 @@ for block in self.blocks:
 ## 실험 3-1, 3-2
 ### 역재생 비디오에 대한 GT 생성
 - 순재생 비디오 기준 GT를 기반으로 역재생 비디오 기준 GT를 생성합니다.
-- `./opentad/datasets/transforms/end_to_end.py`의 350~358번 줄에서 확인할 수 있습니다.
+- `./opentad/datasets/transforms/end_to_end.py`의 350 ~ 358번 줄에서 확인할 수 있습니다.
 ```
 def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                                        # forward_gt_segments는 순재생 비디오 기준 행동 구간, GT label은 비디오에 나타나는 행동의 종류를 순서대로 나타낸 것, trunc_len은 전체 프레임의 개수
     backward_gt_segment = [[-1 * a[1], -1 * a[0]] for a in (forward_gt_segments - trunc_len + 1)]       # 역재생 행동 시작 시간= |행동 종료 frame - frame_num + 1|, 역재생 행동 종료 시간 =  |행동 시작 frame - frame_num + 1|
@@ -228,11 +228,11 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
         back_reg_pred_st = back_reg_pred_st.unsqueeze(dim=2) 
         back_reg_pred_ed = back_reg_pred_ed.unsqueeze(dim=2) 
         ################################################################################################################
-        return reg_pred_st, reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred            # 순재생 기준 행동 시작 및 종료 Frame까지 거리, 역재생 기준 행동 시작 및 종료 Frame까지 거리, 순재생 기준 Cs, 역재생 기준 ds, de
+        return reg_pred_st, reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred            # 순재생 기준 행동 시작 및 종료 Frame까지 거리, 역재생 기준 행동 시작 및 종료 Frame까지 거리, 순재생 기준 cs, 역재생 기준 ds, de
 ```
 
 ### 3-1 최종 예측
-- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 341~359, 361~380번 줄에 위치합니다.
+- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 341 ~ 359, 361 ~ 380번 줄에 위치합니다.
 ```
     def forward_prediction(self, for_reg_pred_st, for_reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred):
         for_reg_pred = torch.concat((for_reg_pred_st, for_reg_pred_ed), dim = 2)                                    # (순재생 ds - 순재생 de) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
@@ -256,7 +256,7 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 ```
 
 ### 3-2 최종 예측
-- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 918~936, 938~957번 줄에 위치합니다.
+- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 918 ~ 936번 줄과 938 ~ 957번 줄에 위치합니다.
 ```
     def forward_prediction(self, for_reg_pred_st, for_reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred):
         for_reg_pred = torch.concat((for_reg_pred_st, for_reg_pred_ed), dim = 2)                                    # (순재생 ds - 순재생 de) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
@@ -300,6 +300,7 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 - Action이 존재하는 Frame 기준
     * 모든 Class에 대해 정답인 Class의 score가 가장 큼
     * 모든 Class의 score 차이가 거의 없음
+      
 역재생 비디오 기준 실험
 - 정답 Class 기준 Frame 방향
     * 이전, 이후의 score가 action 이 존재한는 구간 보다 더 큼
@@ -307,8 +308,9 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
     * 정답인 Class의 socre가 가장 큰 값을 가지지 않음
     * 모든 Class의 score중 중간 순위 해당
     * 모든 Class의 score 차이가 거의 없음
+      
 결론
--FC layer 를 통해 GT에 가까운 출력을 내지 못함
+- FC layer 를 통해 GT에 가까운 출력을 내지 못함
 
 ![image](https://github.com/user-attachments/assets/3a8c0fb7-ccdf-4a1d-aa64-79ae3228f6db)
 
