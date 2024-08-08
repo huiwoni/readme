@@ -171,3 +171,11 @@ if self.use_adapter:
 ```
 - 또한 Backbone에서 새로 추가한 adapter만 학습이 가능하도록하였습니다.
 - 이에대한 코드는 `./opentad/models/backbones/vit_adapter_bi_1.py`497~502번 줄에서 확인 가능합니다.
+```
+for block in self.blocks:
+    for m, n in block.named_children():
+        if "bi_adapter" not in m and m != "drop_path":       # bi_adapter의 파라미터가 아닌 것만 선택
+            n.eval()
+            for param in n.parameters():
+                param.requires_grad = False                  # 선택된 파라미터는 학습이 불가능 하도록 함
+```
