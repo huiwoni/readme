@@ -296,20 +296,19 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 ### cs 값 변화 분석
 순재생 비디오 기준 실험
 - 정답 Class 기준 Frame 방향
-* 이전, 이후의 score가 action 이 존재하는 구간 보다 더 큼
+    * 이전, 이후의 score가 action 이 존재하는 구간 보다 더 큼
 - Action이 존재하는 Frame 기준
-* 모든 Class에 대해 정답인 Class의 score가 가장 큼
-* 모든 Class의 score 차이가 거의 없음
+    * 모든 Class에 대해 정답인 Class의 score가 가장 큼
+    * 모든 Class의 score 차이가 거의 없음
 역재생 비디오 기준 실험
 - 정답 Class 기준 Frame 방향
-* 이전, 이후의 score가 action 이 존재한는 구간 보다 더 큼
+    * 이전, 이후의 score가 action 이 존재한는 구간 보다 더 큼
 - Action이 존재하는 Frame 기준
-* 정답인 Class의 socre가 가장 큰 값을 가지지 않음
-* 모든 Class의 score중 중간 순위 해당
-* 모든 Class의 score 차이가 거의 없음
+    * 정답인 Class의 socre가 가장 큰 값을 가지지 않음
+    * 모든 Class의 score중 중간 순위 해당
+    * 모든 Class의 score 차이가 거의 없음
 결론
 -FC layer 를 통해 GT에 가까운 출력을 내지 못함
-![image](https://github.com/user-attachments/assets/1d7e4f35-d1c7-4213-979b-c0b07acf7ec2)
 
 ![image](https://github.com/user-attachments/assets/3a8c0fb7-ccdf-4a1d-aa64-79ae3228f6db)
 
