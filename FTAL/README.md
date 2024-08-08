@@ -13,7 +13,7 @@
 ### 역재생 비디오 생성
 - './tools/Reverse_Playback_Video_Generator.py'를 통해 역재생 비디오를 생성할 수 있습니다.
 - 51 번줄에 순재생 비디오의 경로를 입력하고, 52 번줄에 역재생 비디오를 저장할 경로를 입력해 주시면 됩니다.
-- 
+- `./tools/make_annotation.py` 를 통해 역재생 비디오의 annotation 파일을 생성할 수 있습니다.
 ## Backbone
 - Backbone은 다음 [사이트](https://github.com/sming256/OpenTAD/tree/main/configs/adatad)에서 다운 받을 수 있습니다.
 - 모든 실험은 VideoMAE-H 모델을 통해 진행했습니다.
@@ -143,7 +143,7 @@ torchrun --nnodes=1 --nproc_per_node=4 --rdzv_backend=c10d --rdzv_endpoint=local
 11. 최종적으로 순재생 비디오와 역재생 비디오 기준의 cs, ds, de를 각각 출력한다.
 12. 최종 Loss를 계산하고 Backward를 진행한다.
 
-# 주요 코드 설명
+# 주요 코드
 ## 실험 1, 실험 1-1
 - Model, Optimizer, Scheduler, Model_ema을 모두 순재생 비디오 및 역재생 비디오를 위해 2개씩 정의해 구성한다.
 - 예시
@@ -179,3 +179,77 @@ for block in self.blocks:
             for param in n.parameters():
                 param.requires_grad = False                  # 선택된 파라미터는 학습이 불가능 하도록 함
 ```
+## 실험 3-1, 3-2
+### 역재생 비디오에 대한 GT 생성
+- 순재생 비디오 기준 GT를 기반으로 역재생 비디오 기준 GT를 생성합니다.
+- `./opentad/datasets/transforms/end_to_end.py`의 350~358번 줄에서 확인할 수 있습니다.
+```
+def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                                        # forward_gt_segments는 순재생 비디오 기준 행동 구간, GT label은 비디오에 나타나는 행동의 종류를 순서대로 나타낸 것, trunc_len은 전체 프레임의 개수
+    backward_gt_segment = [[-1 * a[1], -1 * a[0]] for a in (forward_gt_segments - trunc_len + 1)]       # 역재생 행동 시작 시간= |행동 종료 frame - frame_num + 1|, 역재생 행동 종료 시간 =  |행동 시작 frame - frame_num + 1|
+    backward_gt_segment.sort()
+    backward_gt_segment = np.array(backward_gt_segment)
+    backward_gt_label = gt_labels[list(range(np.size(gt_labels) - 1, -1, -1))]                          # 비디오 내부 행동의 순서를 거꾸로 뒤집음
+    return backward_gt_segment, backward_gt_label
+
+```
+### 순재생 비디오 기준 또는 역재생 비디오 기준 정렬
+- forward_sort, backward_sort 함수를 통해 확인할 수 있습니다.
+- `./opentad/models/dense_heads/bi_anchor_free_head.py`에 위치해 있습니다.
+- 순재생 비디오 기준 정렬 코드
+```
+    def forward_sort(self, for_cls_pred, back_cls_pred, reg_pred, back_reg_pred):
+        # cls pred, bi cls pred
+        ################################################################################################################
+        for_cls_pred = [x.permute(0, 2, 1) for x in for_cls_pred]                                                    # list : (1, 20, 768), (1, 20, 384), ... , (1, 20, 24) -> list : (1, 768, 20), (1, 384, 20), ... , (1, 24, 20)
+        for_cls_pred = torch.cat(for_cls_pred, dim=1)                                                                # list -> tensor : (1, 1512, 20)
+
+        back_cls_pred = [pred[:, :, list(range(pred.size()[2] - 1, -1, -1))] for pred in back_cls_pred]              # 역재생 기준 cls_pred(cs)를 반대로 나열
+        back_cls_pred = [x.permute(0, 2, 1) for x in back_cls_pred]                                                  # list : (1, 768, 20), (1, 384, 20), ... , (1, 24, 20)
+        back_cls_pred = torch.cat(back_cls_pred, dim=1)                                                              # list -> tensor : (1, 1512, 20)
+        ###############################################################################################################
+
+        # reg_pred
+        ################################################################################################################
+        reg_pred = torch.cat(reg_pred, dim=-1).permute(0, 2, 1)                                                       # list : (1, 2, 766), (1, 2, 384), ... , (1, 2, 24) -> tensor : (1, 1512, 2)
+
+        reg_pred_st = reg_pred[:, :, 0]                                                                               # ds만 분리, tensor : (1, 1512)
+        reg_pred_ed = reg_pred[:, :, 1]                                                                               # de만 분리, tensor : (1, 1512)
+        reg_pred_st = reg_pred_st.unsqueeze(dim=2)                                                                    # tensor : (1, 1512) -> tensor : (1, 1512, 1)
+        reg_pred_ed = reg_pred_ed.unsqueeze(dim=2)                                                                    # tensor : (1, 1512) -> tensor : (1, 1512, 1)
+
+        back_reg_pred = [pred[:,:,list(range(pred.size()[2]-1,-1,-1))] for pred in back_reg_pred]                     # 역재생 기준 reg_pred를 반대로 나열
+        back_reg_pred = torch.cat(back_reg_pred, dim=-1).permute(0, 2, 1)
+
+        back_reg_pred_st = back_reg_pred[:, :, 0]
+        back_reg_pred_ed = back_reg_pred[:, :, 1] 
+        back_reg_pred_st = back_reg_pred_st.unsqueeze(dim=2) 
+        back_reg_pred_ed = back_reg_pred_ed.unsqueeze(dim=2) 
+        ################################################################################################################
+        return reg_pred_st, reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred            # 순재생 기준 행동 시작 및 종료 Frame까지 거리, 역재생 기준 행동 시작 및 종료 Frame까지 거리, 순재생 기준 Cs, 역재생 기준 ds, de
+```
+
+### 3-1 최종 예측
+- forward_prediction, backward_prediction 함수를 통해 확인할 수 있으며 341~359, 361~380번줄에 위치합니다.
+```
+    def forward_prediction(self, for_reg_pred_st, for_reg_pred_ed, back_reg_pred_st, back_reg_pred_ed, for_cls_pred, back_cls_pred):
+        for_reg_pred = torch.concat((for_reg_pred_st, for_reg_pred_ed), dim = 2)                                    # (순재생 ds - 순재생 de) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
+        back_reg_pred = torch.concat((back_reg_pred_ed, back_reg_pred_st), dim=2)                                   # (역재생 de - 역재생 ds) concat, tensor : (1, 1512, 1) -> tensor : (1, 1512, 2)
+        cls_pred = torch.concat((for_cls_pred, back_cls_pred), dim=1)                                               # (순재생 cs - 역재생 cs) concat, tensor : (1, 1512, 20) -> tensor : (1, 3024, 20)
+        reg_pred = torch.concat((for_reg_pred, back_reg_pred), dim=1)                                               # (순재생 cs - 역재생 cs) concat, tensor : (1, 1512, 2) -> tensor : (1, 3024, 2)
+        all_pred = torch.concat((reg_pred, cls_pred), dim=2)                                                        # ((de, ds) - cs) concat, tensor : (1, 3024, 2), (1, 3024, 20) -> tensor : (1, 3024, 22)
+
+        all_pred = all_pred.squeeze(dim = 0)                                                                        # tensor : (1, 3024, 22) -> tensor : (3024, 22)
+        all_pred = all_pred.permute(1, 0)                                                                           # tensor : (3024, 22) -> tensor : (22,3024)
+        all_pred = self.forward_fc(all_pred)                                                                        # tensor : (22,3 024) * weight : (3024, 1512) = tensor : (22, 1512) 
+        all_pred = all_pred.permute(1, 0)                                                                           # tensor : (22, 1512) -> tensor : (1512, 22) 
+        all_pred = all_pred.unsqueeze(dim=0)                                                                        # tensor : (1512, 22) -> tensor : (1, 1512, 22) 
+
+        final_reg_pred = all_pred[:,:,:2]                                                                           # ds, de 추출, tensor : (1, 1512, 2)
+        final_cls_pre = all_pred[:,:,2:]                                                                            # cs 추출, tensor : (1, 1512, 20)
+ 
+        final_reg_pred = F.relu(final_reg_pred)                                                                     # Relu
+
+        return final_reg_pred, final_cls_pre                                                                        # (ds, de), cs 리턴
+```
+
+### 3-2 최종 예측
