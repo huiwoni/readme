@@ -318,6 +318,7 @@ def mk_back_gt(self, forward_gt_segments, gt_labels, trunc_len):                
 ### 순재생 비디오 기준 정렬 확인
 - 역재생 비디오 기준 cs를 순재생 비디오 기준으로 나열 후 비교하였습니다.
 - GT와 동일한 위치를 관찰했을 때 가장 작은 값이 위치하거나 주변 score보다 낮은 값들이 위치합니다.
+- 정확히 나열되어 있는것으로 생각됩니다.
 ![image](https://github.com/user-attachments/assets/774328be-cca3-432e-91f1-bd60fa070029)
 ### 3d conv 작동 확인
 - 실제 3d conv의 weight, bias 값을 확인하고, GT주변에서 연산이 생각한 것과 동일하게 되고 있는지 확인해 보았습니다.
